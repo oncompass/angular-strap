@@ -89,6 +89,7 @@ angular.module('mgcrea.ngStrap.tooltip', ['mgcrea.ngStrap.core', 'mgcrea.ngStrap
 
         // Private vars
         var timeout;
+        var hideTimeout;
         var hoverState;
 
         // Fetch, compile then initialize tooltip
@@ -254,6 +255,7 @@ angular.module('mgcrea.ngStrap.tooltip', ['mgcrea.ngStrap.core', 'mgcrea.ngStrap
             bindAutoCloseEvents();
           }
 
+          handlePopoversElementHoverActions();
         };
 
         function enterAnimateCallback () {
@@ -263,21 +265,27 @@ angular.module('mgcrea.ngStrap.tooltip', ['mgcrea.ngStrap.core', 'mgcrea.ngStrap
           }
         }
 
+        function handlePopoversElementHoverActions () {
+          $tooltip.$element.on('mouseenter', function () {
+            clearTimeout(hideTimeout);
+            $tooltip.$element.on('mouseleave', $tooltip.leave);
+          });
+        }
+
         $tooltip.leave = function () {
 
           clearTimeout(timeout);
+          clearTimeout(hideTimeout);
           hoverState = 'out';
           if (!options.delay || !options.delay.hide) {
             return $tooltip.hide();
           }
-          $tooltip.$element.on('mouseenter', function () {
-            clearTimeout(timeout);
-            $tooltip.$element.on('mouseleave', $tooltip.leave);
-          });
-          timeout = setTimeout(function () {
+          hideTimeout = setTimeout(function () {
             if (hoverState === 'out') {
               $tooltip.hide();
-              $tooltip.$element.off('mouseenter');
+              if ($tooltip.$element) {
+                $tooltip.$element.off('mouseenter');
+              }
             }
           }, options.delay.hide);
 

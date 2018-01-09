@@ -78,6 +78,7 @@ angular.module('mgcrea.ngStrap.tooltip', [ 'mgcrea.ngStrap.core', 'mgcrea.ngStra
       };
       $tooltip.$isShown = scope.$isShown = false;
       var timeout;
+      var hideTimeout;
       var hoverState;
       var compileData;
       var tipElement;
@@ -190,6 +191,7 @@ angular.module('mgcrea.ngStrap.tooltip', [ 'mgcrea.ngStrap.core', 'mgcrea.ngStra
         if (options.autoClose) {
           bindAutoCloseEvents();
         }
+        handlePopoversElementHoverActions();
       };
       function enterAnimateCallback() {
         scope.$emit(options.prefixEvent + '.show', $tooltip);
@@ -197,8 +199,15 @@ angular.module('mgcrea.ngStrap.tooltip', [ 'mgcrea.ngStrap.core', 'mgcrea.ngStra
           options.onShow($tooltip);
         }
       }
+      function handlePopoversElementHoverActions() {
+        $tooltip.$element.on('mouseenter', function() {
+          clearTimeout(hideTimeout);
+          $tooltip.$element.on('mouseleave', $tooltip.leave);
+        });
+      }
       $tooltip.leave = function() {
         clearTimeout(timeout);
+        clearTimeout(hideTimeout);
         hoverState = 'out';
         if (!options.delay || !options.delay.hide) {
           return $tooltip.hide();
@@ -207,10 +216,12 @@ angular.module('mgcrea.ngStrap.tooltip', [ 'mgcrea.ngStrap.core', 'mgcrea.ngStra
           clearTimeout(timeout);
           $tooltip.$element.on('mouseleave', $tooltip.leave);
         });
-        timeout = setTimeout(function() {
+        hideTimeout = setTimeout(function() {
           if (hoverState === 'out') {
             $tooltip.hide();
-            $tooltip.$element.off('mouseenter');
+            if ($tooltip.$element) {
+              $tooltip.$element.off('mouseenter');
+            }
           }
         }, options.delay.hide);
       };
