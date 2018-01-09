@@ -270,9 +270,14 @@ angular.module('mgcrea.ngStrap.tooltip', ['mgcrea.ngStrap.core', 'mgcrea.ngStrap
           if (!options.delay || !options.delay.hide) {
             return $tooltip.hide();
           }
+          $tooltip.$element.on('mouseenter', function () {
+            clearTimeout(timeout);
+            $tooltip.$element.on('mouseleave', $tooltip.leave);
+          });
           timeout = setTimeout(function () {
             if (hoverState === 'out') {
               $tooltip.hide();
+              $tooltip.$element.off('mouseenter');
             }
           }, options.delay.hide);
 
