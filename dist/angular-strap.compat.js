@@ -1,6 +1,6 @@
 /**
  * angular-strap
- * @version v2.3.12 - 2018-01-09
+ * @version v2.3.12 - 2018-01-15
  * @link http://mgcrea.github.io/angular-strap
  * @author Olivier Louvignes <olivier@mg-crea.com> (https://github.com/mgcrea)
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -456,10 +456,6 @@
           if (!options.delay || !options.delay.hide) {
             return $tooltip.hide();
           }
-          $tooltip.$element.on('mouseenter', function() {
-            clearTimeout(timeout);
-            $tooltip.$element.on('mouseleave', $tooltip.leave);
-          });
           hideTimeout = setTimeout(function() {
             if (hoverState === 'out') {
               $tooltip.hide();
