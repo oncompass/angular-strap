@@ -1,6 +1,6 @@
 /**
  * angular-strap
- * @version v2.3.12 - 2018-01-15
+ * @version v2.3.12 - 2018-01-16
  * @link http://mgcrea.github.io/angular-strap
  * @author Olivier Louvignes <olivier@mg-crea.com> (https://github.com/mgcrea)
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -290,19 +290,36 @@ angular.module('mgcrea.ngStrap.tooltip', [ 'mgcrea.ngStrap.core', 'mgcrea.ngStra
         var elementPosition = getPosition();
         var tipWidth = tipElement.prop('offsetWidth');
         var tipHeight = tipElement.prop('offsetHeight');
+        var clientWidth = document.documentElement.clientWidth;
+        var clientHeight = document.documentElement.clientHeight;
+        var footerAdjustment = 50;
         $tooltip.$viewport = options.viewport && findElement(options.viewport.selector || options.viewport);
         if (autoPlace) {
           var originalPlacement = placement;
           var viewportPosition = getPosition($tooltip.$viewport);
-          if (/bottom/.test(originalPlacement) && elementPosition.bottom + tipHeight > viewportPosition.bottom) {
-            placement = originalPlacement.replace('bottom', 'top');
-          } else if (/top/.test(originalPlacement) && elementPosition.top - tipHeight < viewportPosition.top) {
-            placement = originalPlacement.replace('top', 'bottom');
-          }
-          if (/left/.test(originalPlacement) && elementPosition.left - tipWidth < viewportPosition.left) {
-            placement = placement.replace('left', 'right');
-          } else if (/right/.test(originalPlacement) && elementPosition.right + tipWidth > viewportPosition.width) {
-            placement = placement.replace('right', 'left');
+          if (/bottom-left/.test(originalPlacement)) {
+            if (elementPosition.right + tipWidth > clientWidth) {
+              placement = placement.replace('bottom-left', 'bottom-right');
+              if (elementPosition.bottom + tipHeight + footerAdjustment > clientHeight) {
+                placement = placement.replace('bottom', 'top');
+              }
+            } else if (elementPosition.bottom + tipHeight + footerAdjustment > clientHeight) {
+              placement = placement.replace('bottom-left', 'top-left');
+              if (elementPosition.right + tipWidth > clientWidth) {
+                placement = placement.replace('left', 'right');
+              }
+            }
+          } else {
+            if (/bottom/.test(originalPlacement) && elementPosition.bottom + tipHeight > viewportPosition.bottom) {
+              placement = originalPlacement.replace('bottom', 'top');
+            } else if (/top/.test(originalPlacement) && elementPosition.top - tipHeight < viewportPosition.top) {
+              placement = originalPlacement.replace('top', 'bottom');
+            }
+            if (/left/.test(originalPlacement) && elementPosition.left - tipWidth < viewportPosition.left) {
+              placement = placement.replace('left', 'right');
+            } else if (/right/.test(originalPlacement) && elementPosition.right + tipWidth > viewportPosition.width) {
+              placement = placement.replace('right', 'left');
+            }
           }
           tipElement.removeClass(originalPlacement).addClass(placement);
         }
