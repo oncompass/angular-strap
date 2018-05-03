@@ -61,5 +61,8 @@
     "test": "gulp karma:unit",
     "test:watch": "npm run test -- -w",
     "lint": "eslint src/*/*.js"
+  },
+  "engines": {
+    "node": "6.0.0"
   }
 }
